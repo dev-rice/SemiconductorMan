@@ -13,8 +13,18 @@ public class BoardManager : MonoBehaviour {
 	public void setupBoard(){
 		boardHolder = new GameObject("Board").transform;
 
-		for (int i = 0; i < graph.test_path.points.Count; ++i){
-			Vector2 current_point = graph.test_path.points[i];
+		foreach (GamePath path in graph.getAllPaths()){
+			fillPathWithPointBubbles(path);
+		}
+
+	}
+
+	public void fillPathWithPointBubbles(GamePath path){
+		for (int i = 0; i < path.points.Count; ++i){
+			// Get the current point as a vector
+			Vector2 current_point = path.points[i];
+
+			// Create a point bubble at that position
 			GameObject instance = Instantiate(point_bubble, new Vector3(current_point.x, current_point.y, 0), Quaternion.identity) as GameObject;
 
 			instance.transform.SetParent(boardHolder);

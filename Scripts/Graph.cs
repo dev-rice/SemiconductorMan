@@ -123,27 +123,38 @@ public class PathHolder {
 [Serializable]
 public class Graph {
 
+	public List<Node> nodes = new List<Node>();
 	public AdjacencyList adj_list = new AdjacencyList();
 	public PathHolder path_holder;
-	public GamePath test_path;
 
 	public Graph(){
 		// Create an example graph with adjacency list
-		Node a = new Node(new Vector2(-4.0f, 4.0f));
-		Node b = new Node(new Vector2(4.0f, 4.0f));
-		Node c = new Node(new Vector2(-4.0f, -4.0f));
-		Node d = new Node(new Vector2(4.0f, -4.0f));
+		nodes.Add(new Node(new Vector2(-4.0f, 4.0f)));
+		nodes.Add(new Node(new Vector2(4.0f, 4.0f)));
+		nodes.Add(new Node(new Vector2(-4.0f, -4.0f)));
+		nodes.Add(new Node(new Vector2(4.0f, -4.0f)));
 
-		adj_list.addUndirectedEdge(a, b);
-		adj_list.addUndirectedEdge(a, c);
-		adj_list.addUndirectedEdge(b, d);
-		adj_list.addUndirectedEdge(c, d);
+		adj_list.addUndirectedEdge(nodes[0], nodes[1]);
+		adj_list.addUndirectedEdge(nodes[0], nodes[2]);
+		adj_list.addUndirectedEdge(nodes[1], nodes[3]);
+		adj_list.addUndirectedEdge(nodes[2], nodes[3]);
 
 		// Create the paths from the adjacency list
 		path_holder = new PathHolder(adj_list);
 
-		test_path = path_holder.getPathBetween(c, d);
+	}
 
+	public List<GamePath> getAllPaths(){
+		List<GamePath> all_paths = new List<GamePath>();
+		foreach (Node node in nodes){
+			foreach(Node adjacent in adj_list.getAdjacentNodes(node)){
+				GamePath path = path_holder.getPathBetween(node, adjacent);
+				if (!all_paths.Contains(path)){
+					all_paths.Add(path);
+				}
+			}
+		}
+		return all_paths;
 	}
 
 }
