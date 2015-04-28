@@ -134,10 +134,10 @@ public class Graph {
 
 	public Graph(){
 		// Create an example graph with adjacency list
-		nodes.Add(new Node(new Vector2(-4.0f, 4.0f)));
-		nodes.Add(new Node(new Vector2(4.0f, 4.0f)));
-		nodes.Add(new Node(new Vector2(-4.0f, -4.0f)));
-		nodes.Add(new Node(new Vector2(4.0f, -4.0f)));
+		nodes.Add(new Node(new Vector2(-8.0f, 8.0f)));
+		nodes.Add(new Node(new Vector2(8.0f, 8.0f)));
+		nodes.Add(new Node(new Vector2(-8.0f, -8.0f)));
+		nodes.Add(new Node(new Vector2(8.0f, -8.0f)));
 
 		adj_list.addUndirectedEdge(nodes[0], nodes[1]);
 		adj_list.addUndirectedEdge(nodes[0], nodes[2]);

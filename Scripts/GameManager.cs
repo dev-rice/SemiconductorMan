@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 	public static GameManager instance = null;
+	public BoardManager board_manager;
 
 	// Use this for initialization
 	void Awake () {

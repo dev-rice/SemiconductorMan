@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour {
+public class Player : MovingObject {
 
 	private Animator animator;
-	private Rigidbody2D rb2d;
 
 	// Use this for initialization
 	void Start () {
 		animator = GetComponent<Animator>();
-		rb2d = GetComponent<Rigidbody2D>();
 	}
 
 	// Update is called once per frame

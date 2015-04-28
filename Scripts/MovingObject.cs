@@ -3,9 +3,10 @@ using System.Collections;
 
 public abstract class MovingObject : MonoBehaviour {
 
+	public GamePath current_path;
+
 	private int progress = 0;
 	private int direction = 1;
-	private GamePath current_path;
 	private BoxCollider2D box_collider;
 	private Rigidbody2D rb2d;
 
@@ -15,8 +16,6 @@ public abstract class MovingObject : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D>();
 	}
 
-	// Update is called once per frame
-	void Update () {
 
-	}
+
 }
