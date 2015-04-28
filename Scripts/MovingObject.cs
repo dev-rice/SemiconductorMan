@@ -23,11 +23,7 @@ public abstract class MovingObject : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D>();
 
 		graph = GameManager.instance.board_script.graph;
-		current_path = graph.getDefaultPath();
-
-		Vector2 new_pos_2d = current_path.getPointAtIndex(progress);
-		transform.position = new_pos_2d;
-		prev_dir = direction;
+		setCurrentPath(graph.getDefaultPath());
 
 		inverseMoveTime = 1f / moveTime;
 	}
@@ -61,15 +57,34 @@ public abstract class MovingObject : MonoBehaviour {
 
 			// Find a random path from that node thats not the current path
 			GamePath old_path = current_path;
-			while(current_path == old_path){
-				current_path = graph.getRandomPathFromNode(closest);
+			GamePath new_path = old_path;
+			while(new_path == old_path){
+				new_path = graph.getRandomPathFromNode(closest);
 			}
+			progress = new_path.getIndexForNode(closest);
 
+			setCurrentPath(new_path);
 		}
 
 		// Keep track of our direction to see if it changes between updates
 		prev_dir = direction;
 
+	}
+
+	private void setCurrentPath(GamePath path){
+		current_path = path;
+
+		Vector2 new_pos_2d = current_path.getPointAtIndex(progress);
+		transform.position = new_pos_2d;
+		rb2d.position = new_pos_2d;
+		prev_dir = direction;
+
+		if (current_path.isHorizontal()){
+			Debug.Log("The current path is horizontal");
+		} else if (current_path.isVertical()){
+			Debug.Log("The current path is vertical");
+
+		}
 	}
 
 }

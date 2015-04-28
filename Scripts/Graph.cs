@@ -20,13 +20,21 @@ public class GamePath {
 	float step_size = 0.1f;
 
 	private bool is_horizontal;
+	private Node start;
+	private Node end;
+
+	private bool is_reversed;
 
 	public GamePath(Node a, Node b, int num_points){
+		start = a;
+		end = b;
+
 		points = new List<Vector2>();
 
 		// Given node a and b, and a step size, create a list of points representing the path between the two nodes.
 		Vector2 p0 = a.position;
-		Vector2 p1 = (b.position - a.position) / 3 + a.position;
+		// Vector2 p1 = (b.position - a.position) / 3 + a.position;
+		Vector2 p1 = new Vector2(0, 0);
 		Vector2 p2 = (a.position - b.position) / 3 + b.position;
 		Vector2 p3 = b.position;
 
@@ -81,28 +89,55 @@ public class GamePath {
 		return !is_horizontal;
 	}
 
+	public int getIndexForNode(Node a){
+		int start_index, end_index;
+
+		if (is_reversed){
+			start_index = getNumPoints() - 1;
+			end_index = 0;
+		} else {
+			start_index = 0;
+			end_index = getNumPoints() - 1;
+		}
+
+		if (a == start){
+			return start_index;
+		} else if (a == end) {
+			return end_index;
+		} else {
+			return 0;
+		}
+	}
+
 	private void correctPointOrdering(){
 		// Make this path conform to the standard that incrementing the index will move you to the right, or down. Decrementing the index will move you up or left.
 
 		// Calculate the vector from the first point to the last point
 		Vector2 dir_vector = points[getNumPoints() - 1] - points[0];
 
-
-		if (dir_vector.x > dir_vector.y){
+		Debug.Log(dir_vector);
+		if (Math.Abs(dir_vector.x) > Math.Abs(dir_vector.y)){
 			// The direction vector points more horizontally.
 			is_horizontal = true;
 
 			// If the direction vector is pointing to the left, reverse the list
 			if (dir_vector.x < 0){
+				is_reversed = true;
 				points.Reverse();
+			} else {
+				is_reversed = false;
 			}
 		} else {
+			Debug.Log("vertical");
 			// The direction vector points more vertically.
 			is_horizontal = false;
 
 			// If the direction vector is pointing down, reverse the list
 			if (dir_vector.y < 0){
+				is_reversed = true;
 				points.Reverse();
+			} else {
+				is_reversed = false;
 			}
 
 		}
