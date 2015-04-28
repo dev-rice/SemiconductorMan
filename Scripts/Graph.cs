@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Random = UnityEngine.Random;
+
 
 [Serializable]
 public class Node {
@@ -16,6 +18,8 @@ public class Node {
 public class GamePath {
 	public List<Vector2> points;
 	float step_size = 0.1f;
+
+	private bool is_horizontal;
 
 	public GamePath(Node a, Node b, int num_points){
 		points = new List<Vector2>();
@@ -35,6 +39,8 @@ public class GamePath {
 		// Create point for t=1
 		Vector2 last_point = thirdOrderBezier(a.position, a.position, b.position, b.position, 1);
 		points.Add(last_point);
+
+		correctPointOrdering();
 
 	}
 
@@ -65,6 +71,43 @@ public class GamePath {
 			// impossibruuuu
 			return new Vector2(0, 0);
 		}
+	}
+
+	public bool isHorizontal(){
+		return is_horizontal;
+	}
+
+	public bool isVertical(){
+		return !is_horizontal;
+	}
+
+	private void correctPointOrdering(){
+		// Make this path conform to the standard that incrementing the index will move you to the right, or down. Decrementing the index will move you up or left.
+
+		// Calculate the vector from the first point to the last point
+		Vector2 dir_vector = points[getNumPoints() - 1] - points[0];
+
+
+		if (dir_vector.x > dir_vector.y){
+			// The direction vector points more horizontally.
+			is_horizontal = true;
+
+			// If the direction vector is pointing to the left, reverse the list
+			if (dir_vector.x < 0){
+				points.Reverse();
+			}
+		} else {
+			// The direction vector points more vertically.
+			is_horizontal = false;
+
+			// If the direction vector is pointing down, reverse the list
+			if (dir_vector.y < 0){
+				points.Reverse();
+			}
+
+		}
+
+
 	}
 
 	public bool canMoveTo(int index){
@@ -186,6 +229,24 @@ public class Graph {
 
 	public GamePath getDefaultPath(){
 		return path_holder.getPathBetween(nodes[0], nodes[1]);
+	}
+
+	public Node findClosestNodeToPoint(Vector2 point){
+		// Not too many nodes so this is k
+		foreach (Node node in nodes){
+			float dist = (point - node.position).magnitude;
+			if (dist < float.Epsilon){
+				return node;
+			}
+		}
+		return new Node(new Vector2(0, 0));
+	}
+
+	public GamePath getRandomPathFromNode(Node a){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		int rand_index = Random.Range(0, adjacent.Count);
+		Node b = adjacent[rand_index];
+		return path_holder.getPathBetween(a, b);
 	}
 
 }
