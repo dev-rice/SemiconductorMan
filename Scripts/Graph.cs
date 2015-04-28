@@ -52,6 +52,28 @@ public class GamePath {
 
 		return point;
 	}
+
+	public Vector2 getPointAtIndex(int index){
+		int num_points = getNumPoints();
+		if ((index >= 0) && (index < num_points)){
+			return points[index];
+		} else if (index < 0) {
+			return points[0];
+		} else if (index >= num_points){
+			return points[num_points];
+		} else {
+			// impossibruuuu
+			return new Vector2(0, 0);
+		}
+	}
+
+	public bool canMoveTo(int index){
+		return (index >= 0) && (index < getNumPoints());
+	}
+
+	public int getNumPoints(){
+		return points.Count;
+	}
 }
 
 [Serializable]
@@ -160,6 +182,10 @@ public class Graph {
 			}
 		}
 		return all_paths;
+	}
+
+	public GamePath getDefaultPath(){
+		return path_holder.getPathBetween(nodes[0], nodes[1]);
 	}
 
 }
