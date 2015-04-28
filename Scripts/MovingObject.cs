@@ -7,12 +7,13 @@ public abstract class MovingObject : MonoBehaviour {
 	public GamePath current_path;
 	public Graph graph;
 
-	public float moveTime = 0.2f;
+	public float moveTime = 2.0f;
 
 	private int progress = 0;
 	protected int direction = 1;
 	protected string moving_axis;
 	protected bool wants_to_change_axis = false;
+	protected int requested_move_dir;
 	private int prev_dir;
 	private BoxCollider2D box_collider;
 	private Rigidbody2D rb2d;
@@ -64,8 +65,13 @@ public abstract class MovingObject : MonoBehaviour {
 			// 	new_path = graph.getRandomPathFromNode(closest);
 			// }
 			GamePath new_path;
+			// Try to change axis
 			if (wants_to_change_axis){
-				new_path = graph.getAxisChangePathFromNode(current_path, closest);
+				new_path = graph.getPathWithAxisChangeAndDirection(current_path, closest, requested_move_dir);
+				// If there is no such path, just keep the same axis
+				if (new_path == current_path){
+					new_path = graph.getNoAxisChangePathFromNode(current_path, closest);
+				}
 			} else {
 				new_path = graph.getNoAxisChangePathFromNode(current_path, closest);
 			}
@@ -73,7 +79,11 @@ public abstract class MovingObject : MonoBehaviour {
 			if (new_path != current_path){
 				progress = new_path.getIndexForNode(closest);
 				direction = new_path.getStartingDirection(closest);
-				setCurrentPath(new_path);	
+
+				// Move to the next point
+				progress += direction;
+
+				setCurrentPath(new_path);
 			}
 		}
 
@@ -89,6 +99,8 @@ public abstract class MovingObject : MonoBehaviour {
 		transform.position = new_pos_2d;
 		rb2d.position = new_pos_2d;
 		prev_dir = direction;
+		wants_to_change_axis = false;
+		requested_move_dir = direction;
 
 		if (current_path.isHorizontal()){
 			moving_axis = "horizontal";

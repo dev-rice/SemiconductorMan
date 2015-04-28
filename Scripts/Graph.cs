@@ -17,7 +17,7 @@ public class Node {
 [Serializable]
 public class GamePath {
 	public List<Vector2> points;
-	float step_size = 0.1f;
+	float step_size = 0.01f;
 
 	private bool is_horizontal;
 	private Node start;
@@ -25,7 +25,7 @@ public class GamePath {
 
 	private bool is_reversed;
 
-	public GamePath(Node a, Node b, int num_points){
+	public GamePath(Node a, Node b){
 		start = a;
 		end = b;
 
@@ -50,6 +50,10 @@ public class GamePath {
 
 		correctPointOrdering();
 
+	}
+
+	public List<Vector2> getEvenlySpacedPoints(float spacing){
+		return points;
 	}
 
 	private Vector2 thirdOrderBezier(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float t){
@@ -205,7 +209,7 @@ public class PathHolder {
 	}
 
 	public void addUndirectedPath(Node a, Node b){
-		GamePath path = new GamePath(a, b, 10);
+		GamePath path = new GamePath(a, b);
 
 		// Create the path if the path hasn't been added already
 		if (!path_map.ContainsKey(a)){
@@ -238,16 +242,98 @@ public class Graph {
 	public PathHolder path_holder;
 
 	public Graph(){
-		// Create an example graph with adjacency list
-		nodes.Add(new Node(new Vector2(-4.0f, 4.0f)));
-		nodes.Add(new Node(new Vector2(4.0f, 4.0f)));
-		nodes.Add(new Node(new Vector2(-4.0f, -4.0f)));
-		nodes.Add(new Node(new Vector2(4.0f, -4.0f)));
+		// // Create an example graph with adjacency list
+		// nodes.Add(new Node(new Vector2(-4.0f, 4.0f)));
+		// nodes.Add(new Node(new Vector2(4.0f, 4.0f)));
+		// nodes.Add(new Node(new Vector2(-4.0f, -4.0f)));
+		// nodes.Add(new Node(new Vector2(4.0f, -4.0f)));
+		//
+		// adj_list.addUndirectedEdge(nodes[0], nodes[1]);
+		// adj_list.addUndirectedEdge(nodes[0], nodes[2]);
+		// adj_list.addUndirectedEdge(nodes[1], nodes[3]);
+		// adj_list.addUndirectedEdge(nodes[2], nodes[3]);
+		float regular_width = 8.0f;
+		float half_width = regular_width / 2.0f;
+		float regular_height = -8.0f;
+		float half_height = regular_height / 2.0f;
+
+		nodes.Add(new Node(new Vector2(0.0f, 0.0f)));
+		nodes.Add(new Node(new Vector2(regular_width, 0.0f)));
+		nodes.Add(new Node(new Vector2(regular_width * 2f, 0.0f)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f, 0.0f)));
+		nodes.Add(new Node(new Vector2(regular_width * 4f, 0.0f)));
+		nodes.Add(new Node(new Vector2(regular_width * 5f, 0.0f)));
+
+		nodes.Add(new Node(new Vector2(0.0f, regular_height)));
+		nodes.Add(new Node(new Vector2(regular_width, regular_height)));
+		nodes.Add(new Node(new Vector2(regular_width + half_width, regular_height)));
+		nodes.Add(new Node(new Vector2(regular_width * 2f, regular_height)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f, regular_height)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f + half_width, regular_height)));
+		nodes.Add(new Node(new Vector2(regular_width * 4f, regular_height)));
+		nodes.Add(new Node(new Vector2(regular_width * 5f, regular_height)));
+
+		nodes.Add(new Node(new Vector2(0.0f, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(regular_width, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(regular_width + half_width, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(regular_width * 2f, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f + half_width, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(regular_width * 4f, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(regular_width * 5f, regular_height * 2f)));
+
+		nodes.Add(new Node(new Vector2(regular_width * 2f, regular_height * 3f)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f, regular_height * 3f)));
 
 		adj_list.addUndirectedEdge(nodes[0], nodes[1]);
-		adj_list.addUndirectedEdge(nodes[0], nodes[2]);
-		adj_list.addUndirectedEdge(nodes[1], nodes[3]);
-		adj_list.addUndirectedEdge(nodes[2], nodes[3]);
+		adj_list.addUndirectedEdge(nodes[0], nodes[6]);
+
+		adj_list.addUndirectedEdge(nodes[1], nodes[2]);
+		adj_list.addUndirectedEdge(nodes[1], nodes[7]);
+
+		adj_list.addUndirectedEdge(nodes[2], nodes[9]);
+
+		adj_list.addUndirectedEdge(nodes[3], nodes[4]);
+		adj_list.addUndirectedEdge(nodes[3], nodes[10]);
+
+		adj_list.addUndirectedEdge(nodes[4], nodes[12]);
+		adj_list.addUndirectedEdge(nodes[4], nodes[5]);
+
+		adj_list.addUndirectedEdge(nodes[5], nodes[13]);
+
+		adj_list.addUndirectedEdge(nodes[6], nodes[7]);
+		adj_list.addUndirectedEdge(nodes[6], nodes[14]);
+
+		adj_list.addUndirectedEdge(nodes[7], nodes[8]);
+		adj_list.addUndirectedEdge(nodes[7], nodes[15]);
+
+		adj_list.addUndirectedEdge(nodes[8], nodes[16]);
+		adj_list.addUndirectedEdge(nodes[8], nodes[9]);
+
+		adj_list.addUndirectedEdge(nodes[9], nodes[10]);
+
+		adj_list.addUndirectedEdge(nodes[10], nodes[11]);
+
+		adj_list.addUndirectedEdge(nodes[11], nodes[12]);
+		adj_list.addUndirectedEdge(nodes[11], nodes[19]);
+
+		adj_list.addUndirectedEdge(nodes[12], nodes[13]);
+		adj_list.addUndirectedEdge(nodes[12], nodes[20]);
+
+		adj_list.addUndirectedEdge(nodes[13], nodes[21]);
+
+		adj_list.addUndirectedEdge(nodes[14], nodes[15]);
+
+		adj_list.addUndirectedEdge(nodes[16], nodes[17]);
+
+		adj_list.addUndirectedEdge(nodes[17], nodes[22]);
+
+		adj_list.addUndirectedEdge(nodes[18], nodes[19]);
+		adj_list.addUndirectedEdge(nodes[18], nodes[23]);
+
+		adj_list.addUndirectedEdge(nodes[20], nodes[21]);
+
+		adj_list.addUndirectedEdge(nodes[22], nodes[23]);
 
 		// Create the paths from the adjacency list
 		path_holder = new PathHolder(adj_list);
@@ -294,8 +380,26 @@ public class Graph {
 		bool is_horizontal = path.isHorizontal();
 		foreach (Node node in adjacent){
 			GamePath new_path = path_holder.getPathBetween(a, node);
-			if (new_path.isHorizontal() == is_horizontal){
+			if (new_path.isHorizontal() == is_horizontal && new_path != path){
 				// The two paths have the same axis
+				return new_path;
+			}
+		}
+		return path;
+	}
+
+	public GamePath getPathWithAxisChangeAndDirection(GamePath path, Node a, int direction){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		bool is_horizontal = path.isHorizontal();
+		foreach (Node node in adjacent){
+			GamePath new_path = path_holder.getPathBetween(a, node);
+			int new_dir = new_path.getStartingDirection(a);
+
+			bool is_same_path = new_path == path;
+			bool is_same_axis = new_path.isHorizontal() == is_horizontal;
+			bool is_correct_direction = new_dir == direction;
+
+			if (!is_same_path && !is_same_axis && is_correct_direction){
 				return new_path;
 			}
 		}
@@ -307,7 +411,7 @@ public class Graph {
 		bool is_horizontal = path.isHorizontal();
 		foreach (Node node in adjacent){
 			GamePath new_path = path_holder.getPathBetween(a, node);
-			if (new_path.isHorizontal() != is_horizontal){
+			if (new_path.isHorizontal() != is_horizontal && new_path != path){
 				// The two paths have a different axis
 				return new_path;
 			}

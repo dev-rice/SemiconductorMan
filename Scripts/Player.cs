@@ -26,16 +26,21 @@ public class Player : MovingObject {
 				setHorizontalAnimation();
 				direction = (horizontal < 0) ? -1 : 1;
 				wants_to_change_axis = false;
+				requested_move_dir = direction;
  			} else {
 				wants_to_change_axis = true;
+				requested_move_dir = (horizontal < 0) ? -1 : 1;
 			}
 		} else if (vertical != 0){
 			if (moving_axis == "vertical"){
 				setVerticalAnimation();
 				direction = (vertical < 0) ? -1 : 1;
 				wants_to_change_axis = false;
+				requested_move_dir = direction;
 			} else {
 				wants_to_change_axis = true;
+				requested_move_dir = (vertical < 0) ? -1 : 1;
+
 			}
 
 		}

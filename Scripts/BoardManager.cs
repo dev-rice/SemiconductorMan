@@ -13,10 +13,23 @@ public class BoardManager : MonoBehaviour {
 	public void setupBoard(){
 		boardHolder = new GameObject("Board").transform;
 
-		foreach (GamePath path in graph.getAllPaths()){
-			fillPathWithPointBubbles(path);
-		}
 
+
+	}
+
+	public void drawPathAsCurve(GamePath path){
+
+		for (int i = 1; i < path.points.Count; ++i){
+			Vector2 prev2d = path.points[i - 1];
+			Vector2 current2d = path.points[i];
+
+			Vector3 prev = new Vector3(prev2d.x, prev2d.y, 0f);
+			Vector3 current = new Vector3(current2d.x, current2d.y, 0f);
+
+			Gizmos.color = Color.white;
+			Gizmos.DrawLine(prev, current);
+
+		}
 	}
 
 	public void fillPathWithPointBubbles(GamePath path){
@@ -28,6 +41,12 @@ public class BoardManager : MonoBehaviour {
 			GameObject instance = Instantiate(point_bubble, new Vector3(current_point.x, current_point.y, 0), Quaternion.identity) as GameObject;
 
 			instance.transform.SetParent(boardHolder);
+		}
+	}
+
+	void OnDrawGizmos(){
+		foreach (GamePath path in graph.getAllPaths()){
+			drawPathAsCurve(path);
 		}
 	}
 
