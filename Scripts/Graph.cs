@@ -33,8 +33,8 @@ public class GamePath {
 
 		// Given node a and b, and a step size, create a list of points representing the path between the two nodes.
 		Vector2 p0 = a.position;
-		// Vector2 p1 = (b.position - a.position) / 3 + a.position;
-		Vector2 p1 = new Vector2(0, 0);
+		Vector2 p1 = (b.position - a.position) / 3 + a.position;
+		// Vector2 p1 = new Vector2(0, 0);
 		Vector2 p2 = (a.position - b.position) / 3 + b.position;
 		Vector2 p3 = b.position;
 
@@ -81,6 +81,13 @@ public class GamePath {
 		}
 	}
 
+	public int getStartingDirection(Node a){
+		int index = getIndexForNode(a);
+
+		int direction = (index == 0) ? 1 : -1;
+		return direction;
+	}
+
 	public bool isHorizontal(){
 		return is_horizontal;
 	}
@@ -115,7 +122,6 @@ public class GamePath {
 		// Calculate the vector from the first point to the last point
 		Vector2 dir_vector = points[getNumPoints() - 1] - points[0];
 
-		Debug.Log(dir_vector);
 		if (Math.Abs(dir_vector.x) > Math.Abs(dir_vector.y)){
 			// The direction vector points more horizontally.
 			is_horizontal = true;
@@ -128,7 +134,6 @@ public class GamePath {
 				is_reversed = false;
 			}
 		} else {
-			Debug.Log("vertical");
 			// The direction vector points more vertically.
 			is_horizontal = false;
 
@@ -234,10 +239,10 @@ public class Graph {
 
 	public Graph(){
 		// Create an example graph with adjacency list
-		nodes.Add(new Node(new Vector2(-8.0f, 8.0f)));
-		nodes.Add(new Node(new Vector2(8.0f, 8.0f)));
-		nodes.Add(new Node(new Vector2(-8.0f, -8.0f)));
-		nodes.Add(new Node(new Vector2(8.0f, -8.0f)));
+		nodes.Add(new Node(new Vector2(-4.0f, 4.0f)));
+		nodes.Add(new Node(new Vector2(4.0f, 4.0f)));
+		nodes.Add(new Node(new Vector2(-4.0f, -4.0f)));
+		nodes.Add(new Node(new Vector2(4.0f, -4.0f)));
 
 		adj_list.addUndirectedEdge(nodes[0], nodes[1]);
 		adj_list.addUndirectedEdge(nodes[0], nodes[2]);
@@ -282,6 +287,32 @@ public class Graph {
 		int rand_index = Random.Range(0, adjacent.Count);
 		Node b = adjacent[rand_index];
 		return path_holder.getPathBetween(a, b);
+	}
+
+	public GamePath getNoAxisChangePathFromNode(GamePath path, Node a){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		bool is_horizontal = path.isHorizontal();
+		foreach (Node node in adjacent){
+			GamePath new_path = path_holder.getPathBetween(a, node);
+			if (new_path.isHorizontal() == is_horizontal){
+				// The two paths have the same axis
+				return new_path;
+			}
+		}
+		return path;
+	}
+
+	public GamePath getAxisChangePathFromNode(GamePath path, Node a){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		bool is_horizontal = path.isHorizontal();
+		foreach (Node node in adjacent){
+			GamePath new_path = path_holder.getPathBetween(a, node);
+			if (new_path.isHorizontal() != is_horizontal){
+				// The two paths have a different axis
+				return new_path;
+			}
+		}
+		return path;
 	}
 
 }

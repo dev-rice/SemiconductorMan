@@ -22,16 +22,46 @@ public class Player : MovingObject {
 		}
 
 		if (horizontal != 0){
-			animator.SetBool("moving_vertical", false);
-			direction = (horizontal < 0) ? -1 : 1;
+			if (moving_axis == "horizontal"){
+				setHorizontalAnimation();
+				direction = (horizontal < 0) ? -1 : 1;
+				wants_to_change_axis = false;
+ 			} else {
+				wants_to_change_axis = true;
+			}
 		} else if (vertical != 0){
-			animator.SetBool("moving_vertical", true);
-			direction = (vertical < 0) ? -1 : 1;
+			if (moving_axis == "vertical"){
+				setVerticalAnimation();
+				direction = (vertical < 0) ? -1 : 1;
+				wants_to_change_axis = false;
+			} else {
+				wants_to_change_axis = true;
+			}
 
 		}
 
 		base.Update();
 
 	}
+
+	private void setHorizontalAnimation(){
+		animator.SetBool("moving_vertical", false);
+	}
+
+	private void setVerticalAnimation(){
+		animator.SetBool("moving_vertical", true);
+	}
+
+	protected override void setCurrentPath(GamePath path){
+		base.setCurrentPath(path);
+
+		if (moving_axis == "horizontal"){
+			setHorizontalAnimation();
+		} else if (moving_axis == "vertical"){
+			setVerticalAnimation();
+		}
+
+	}
+
 
 }

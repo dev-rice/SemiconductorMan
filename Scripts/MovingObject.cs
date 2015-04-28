@@ -11,6 +11,8 @@ public abstract class MovingObject : MonoBehaviour {
 
 	private int progress = 0;
 	protected int direction = 1;
+	protected string moving_axis;
+	protected bool wants_to_change_axis = false;
 	private int prev_dir;
 	private BoxCollider2D box_collider;
 	private Rigidbody2D rb2d;
@@ -55,15 +57,24 @@ public abstract class MovingObject : MonoBehaviour {
 			// Get the closest node to or location
 			Node closest = graph.findClosestNodeToPoint(rb2d.position);
 
-			// Find a random path from that node thats not the current path
-			GamePath old_path = current_path;
-			GamePath new_path = old_path;
-			while(new_path == old_path){
-				new_path = graph.getRandomPathFromNode(closest);
+			// // Find a random path from that node thats not the current path
+			// GamePath old_path = current_path;
+			// GamePath new_path = old_path;
+			// while(new_path == old_path){
+			// 	new_path = graph.getRandomPathFromNode(closest);
+			// }
+			GamePath new_path;
+			if (wants_to_change_axis){
+				new_path = graph.getAxisChangePathFromNode(current_path, closest);
+			} else {
+				new_path = graph.getNoAxisChangePathFromNode(current_path, closest);
 			}
-			progress = new_path.getIndexForNode(closest);
 
-			setCurrentPath(new_path);
+			if (new_path != current_path){
+				progress = new_path.getIndexForNode(closest);
+				direction = new_path.getStartingDirection(closest);
+				setCurrentPath(new_path);	
+			}
 		}
 
 		// Keep track of our direction to see if it changes between updates
@@ -71,7 +82,7 @@ public abstract class MovingObject : MonoBehaviour {
 
 	}
 
-	private void setCurrentPath(GamePath path){
+	protected virtual void setCurrentPath(GamePath path){
 		current_path = path;
 
 		Vector2 new_pos_2d = current_path.getPointAtIndex(progress);
@@ -80,10 +91,9 @@ public abstract class MovingObject : MonoBehaviour {
 		prev_dir = direction;
 
 		if (current_path.isHorizontal()){
-			Debug.Log("The current path is horizontal");
+			moving_axis = "horizontal";
 		} else if (current_path.isVertical()){
-			Debug.Log("The current path is vertical");
-
+			moving_axis = "vertical";
 		}
 	}
 
