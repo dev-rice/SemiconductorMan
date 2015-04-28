@@ -21,9 +21,14 @@ public class GamePath {
 		points = new List<Vector2>();
 
 		// Given node a and b, and a step size, create a list of points representing the path between the two nodes.
+		Vector2 p0 = a.position;
+		Vector2 p1 = (b.position - a.position) / 3 + a.position;
+		Vector2 p2 = (a.position - b.position) / 3 + b.position;
+		Vector2 p3 = b.position;
+
 		float t = 0;
 		while (t < 1){
-			Vector2 current_point = thirdOrderBezier(a.position, a.position + new Vector2(1, 0), b.position - new Vector2(1, 0), b.position, t);
+			Vector2 current_point = thirdOrderBezier(p0, p1, p2, p3, t);
 			points.Add(current_point);
 			t += step_size;
 		}
