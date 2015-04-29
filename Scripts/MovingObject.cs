@@ -14,7 +14,7 @@ public abstract class MovingObject : MonoBehaviour {
 	protected string moving_axis;
 	protected bool wants_to_change_axis = false;
 	protected int requested_move_dir;
-	private int prev_dir;
+	protected int prev_dir;
 	private BoxCollider2D box_collider;
 	private Rigidbody2D rb2d;
 
