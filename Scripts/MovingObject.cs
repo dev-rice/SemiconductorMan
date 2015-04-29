@@ -62,17 +62,7 @@ public abstract class MovingObject : MonoBehaviour {
 			Node closest = graph.findClosestNodeToPoint(rb2d.position);
 
 			// When we get to the end of a path, find a new one to travel on
-			GamePath new_path;
-			// Try to change axis
-			if (wants_to_change_axis){
-				new_path = graph.getPathWithAxisChangeAndDirection(current_path, closest, requested_move_dir);
-				// If there is no such path, just keep the same axis
-				if (new_path == current_path){
-					new_path = graph.getNoAxisChangePathFromNode(current_path, closest);
-				}
-			} else {
-				new_path = graph.getNoAxisChangePathFromNode(current_path, closest);
-			}
+			GamePath new_path = findNewPath(closest);
 
 			if (new_path != current_path){
 				progress = new_path.getIndexForNode(closest);
@@ -91,6 +81,8 @@ public abstract class MovingObject : MonoBehaviour {
 		handleAnimations();
 
 	}
+
+	protected abstract GamePath findNewPath(Node closest);
 
 	private void handleAnimations(){
 		if (moving_axis == "horizontal"){

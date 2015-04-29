@@ -277,7 +277,7 @@ public abstract class Graph {
 	}
 
 	public abstract Node getPlayerStartNode();
-	public abstract GamePath getDefaultPath();
+	public abstract GamePath getPlayerStartPath();
 
 	public List<GamePath> getAllPaths(){
 		List<GamePath> all_paths = new List<GamePath>();
@@ -301,6 +301,11 @@ public abstract class Graph {
 			}
 		}
 		return new Node(new Vector2(0, 0));
+	}
+
+	public Node getRandomNode(){
+		int node_index = Random.Range(0, nodes.Count);
+		return nodes[node_index];
 	}
 
 	public GamePath getRandomPathFromNode(Node a){
@@ -461,7 +466,7 @@ public class Graph1 : Graph {
 		return nodes[0];
 	}
 
-	public override GamePath getDefaultPath(){
+	public override GamePath getPlayerStartPath(){
 		return path_holder.getPathBetween(nodes[0], nodes[1]);
 	}
 }

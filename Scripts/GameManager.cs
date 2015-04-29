@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour {
 	public BoardManager board_script;
 
 	public GameObject player;
+	public GameObject enemy;
+
+	public int num_enemies = 3;
 
 	public Transform unit_holder;
 
@@ -36,7 +39,11 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void createEnemies(){
-
+		for (int i = 0; i < num_enemies; ++i){
+			Node enemy_start = board_script.graph.getRandomNode();
+			GameObject enemy_instance = Instantiate(enemy, enemy_start.position, Quaternion.identity) as GameObject;
+			enemy_instance.transform.SetParent(unit_holder);
+		}
 	}
 
 	// Update is called once per frame

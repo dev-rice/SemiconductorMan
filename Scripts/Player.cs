@@ -7,7 +7,7 @@ public class Player : MovingObject {
 		base.Start();
 
 		Node start_node = graph.getPlayerStartNode();
-		GamePath start_path = graph.getRandomPathFromNode(start_node);
+		GamePath start_path = graph.getPlayerStartPath();
 		setCurrentPath(start_path);
 	}
 
@@ -44,6 +44,21 @@ public class Player : MovingObject {
 
 		base.Update();
 
+	}
+
+	protected override GamePath findNewPath(Node closest){
+		GamePath new_path = current_path;
+		// Try to change axis
+		if (wants_to_change_axis){
+			new_path = graph.getPathWithAxisChangeAndDirection(current_path, closest, requested_move_dir);
+			// If there is no such path, just keep the same axis
+			if (new_path == current_path){
+				new_path = graph.getNoAxisChangePathFromNode(current_path, closest);
+			}
+		} else {
+			new_path = graph.getNoAxisChangePathFromNode(current_path, closest);
+		}
+		return new_path;
 	}
 
 }
