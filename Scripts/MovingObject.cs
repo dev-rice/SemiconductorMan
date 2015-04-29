@@ -19,6 +19,7 @@ public abstract class MovingObject : MonoBehaviour {
 	private Rigidbody2D rb2d;
 
 	private float inverseMoveTime;
+	private Animator animator;
 
 	// Use this for initialization
 	protected virtual void Start () {
@@ -29,6 +30,9 @@ public abstract class MovingObject : MonoBehaviour {
 		setCurrentPath(graph.getDefaultPath());
 
 		inverseMoveTime = 1f / moveTime;
+
+		animator = GetComponent<Animator>();
+
 	}
 
 	protected virtual void Update(){
@@ -85,6 +89,42 @@ public abstract class MovingObject : MonoBehaviour {
 		// Keep track of our direction to see if it changes between updates
 		prev_dir = direction;
 
+		handleAnimations();
+
+	}
+
+	private void handleAnimations(){
+		if (moving_axis == "horizontal"){
+			setHorizontalAnimation();
+			if (direction == -1){
+				setBackwardsAnimation();
+			} else {
+				setForwardsAnimation();
+			}
+		} else if (moving_axis == "vertical"){
+			setVerticalAnimation();
+			if (direction == 1){
+				setBackwardsAnimation();
+			} else {
+				setForwardsAnimation();
+			}
+		}
+	}
+
+	private void setHorizontalAnimation(){
+		animator.SetBool("moving_vertical", false);
+	}
+
+	private void setVerticalAnimation(){
+		animator.SetBool("moving_vertical", true);
+	}
+
+	private void setBackwardsAnimation(){
+		animator.SetBool("backwards", true);
+	}
+
+	private void setForwardsAnimation(){
+		animator.SetBool("backwards", false);
 	}
 
 	protected virtual void setCurrentPath(GamePath path){
