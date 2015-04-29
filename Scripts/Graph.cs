@@ -17,7 +17,7 @@ public class Node {
 [Serializable]
 public class GamePath {
 	public List<Vector2> points;
-	float step_size = 0.01f;
+	float step_size = 0.5f;
 
 	private bool is_horizontal;
 	private Node start;
@@ -29,31 +29,62 @@ public class GamePath {
 		start = a;
 		end = b;
 
-		points = new List<Vector2>();
-
-		// Given node a and b, and a step size, create a list of points representing the path between the two nodes.
-		Vector2 p0 = a.position;
-		Vector2 p1 = (b.position - a.position) / 3 + a.position;
-		// Vector2 p1 = new Vector2(0, 0);
-		Vector2 p2 = (a.position - b.position) / 3 + b.position;
-		Vector2 p3 = b.position;
-
-		float t = 0;
-		while (t < 1){
-			Vector2 current_point = thirdOrderBezier(p0, p1, p2, p3, t);
-			points.Add(current_point);
-			t += step_size;
-		}
-		// Create point for t=1
-		Vector2 last_point = thirdOrderBezier(a.position, a.position, b.position, b.position, 1);
-		points.Add(last_point);
+		points = createBezierPath(start, end, step_size);
 
 		correctPointOrdering();
 
 	}
 
+	public List<Vector2> createBezierPath(Node a, Node b, float step){
+		// Given node a and b, and a step size, create a list of points representing the path between the two nodes.
+		Vector2 p0 = a.position;
+
+		Vector2 p1 = (b.position - a.position) / 3 + a.position;
+		// Vector2 p1 = new Vector2(0, 0);
+		// Vector2 p1 = a.position + new Vector2(4, 0);
+
+		Vector2 p2 = (a.position - b.position) / 3 + b.position;
+		// Vector2 p2 = new Vector2(0, 0);
+		// Vector2 p2 = b.position + new Vector2(0, 4);
+
+		Vector2 p3 = b.position;
+
+		List<Vector2> bez_points = new List<Vector2>();
+
+		float t = 0;
+		while (t < 1){
+			Vector2 current_point = thirdOrderBezier(p0, p1, p2, p3, t);
+			bez_points.Add(current_point);
+			t += step;
+		}
+		// Create point for t=1
+		Vector2 last_point = thirdOrderBezier(a.position, a.position, b.position, b.position, 1);
+		bez_points.Add(last_point);
+
+		return bez_points;
+	}
+
 	public List<Vector2> getEvenlySpacedPoints(float spacing){
-		return points;
+		// Brute force way to evenly space points on a bezier curve.
+		float small_step = 0.001f;
+		List<Vector2> high_res_points = createBezierPath(start, end, small_step);
+		List<Vector2> even_points = new List<Vector2>();
+
+		float distance_from_last = 0f;
+		for (int i = 1; i < high_res_points.Count; ++i){
+			Vector2 prev = high_res_points[i - 1];
+			Vector2 current = high_res_points[i];
+			float dist = (prev - current).magnitude;
+			distance_from_last += dist;
+			if (distance_from_last >= spacing){
+				even_points.Add(current);
+				distance_from_last = 0f;
+			}
+		}
+		even_points.Add(start.position);
+		even_points.Add(end.position);
+
+		return even_points;
 	}
 
 	private Vector2 thirdOrderBezier(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float t){
@@ -273,17 +304,17 @@ public class Graph {
 		nodes.Add(new Node(new Vector2(regular_width * 4f, regular_height)));
 		nodes.Add(new Node(new Vector2(regular_width * 5f, regular_height)));
 
-		nodes.Add(new Node(new Vector2(0.0f, regular_height * 2f)));
-		nodes.Add(new Node(new Vector2(regular_width, regular_height * 2f)));
-		nodes.Add(new Node(new Vector2(regular_width + half_width, regular_height * 2f)));
-		nodes.Add(new Node(new Vector2(regular_width * 2f, regular_height * 2f)));
-		nodes.Add(new Node(new Vector2(regular_width * 3f, regular_height * 2f)));
-		nodes.Add(new Node(new Vector2(regular_width * 3f + half_width, regular_height * 2f)));
-		nodes.Add(new Node(new Vector2(regular_width * 4f, regular_height * 2f)));
-		nodes.Add(new Node(new Vector2(regular_width * 5f, regular_height * 2f)));
+		nodes.Add(new Node(new Vector2(0.0f, regular_height * 1.75f)));
+		nodes.Add(new Node(new Vector2(regular_width, regular_height * 1.75f)));
+		nodes.Add(new Node(new Vector2(regular_width + half_width, regular_height * 1.75f)));
+		nodes.Add(new Node(new Vector2(regular_width * 2f, regular_height * 1.75f)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f, regular_height * 1.75f)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f + half_width, regular_height * 1.75f)));
+		nodes.Add(new Node(new Vector2(regular_width * 4f, regular_height * 1.75f)));
+		nodes.Add(new Node(new Vector2(regular_width * 5f, regular_height * 1.75f)));
 
-		nodes.Add(new Node(new Vector2(regular_width * 2f, regular_height * 3f)));
-		nodes.Add(new Node(new Vector2(regular_width * 3f, regular_height * 3f)));
+		nodes.Add(new Node(new Vector2(regular_width * 2f, regular_height * 2.5f)));
+		nodes.Add(new Node(new Vector2(regular_width * 3f, regular_height * 2.5f)));
 
 		adj_list.addUndirectedEdge(nodes[0], nodes[1]);
 		adj_list.addUndirectedEdge(nodes[0], nodes[6]);

@@ -7,7 +7,7 @@ public abstract class MovingObject : MonoBehaviour {
 	public GamePath current_path;
 	public Graph graph;
 
-	public float moveTime = 2.0f;
+	public float moveTime = 0.1f;
 
 	private int progress = 0;
 	protected int direction = 1;
@@ -41,7 +41,7 @@ public abstract class MovingObject : MonoBehaviour {
 		Vector3 next_pos = new Vector3(next_pos2d.x, next_pos2d.y, 0);
 
 		// Update the rigidbody position by moving towards our target from our current position
-		Vector3 newPosition = Vector3.MoveTowards(rb2d.position, next_pos, inverseMoveTime * Time.deltaTime);
+		Vector3 newPosition = Vector3.MoveTowards(rb2d.position, next_pos, Time.deltaTime * inverseMoveTime);
 		rb2d.MovePosition(newPosition);
 
 		// Check how long until we reach the target point
@@ -58,12 +58,7 @@ public abstract class MovingObject : MonoBehaviour {
 			// Get the closest node to or location
 			Node closest = graph.findClosestNodeToPoint(rb2d.position);
 
-			// // Find a random path from that node thats not the current path
-			// GamePath old_path = current_path;
-			// GamePath new_path = old_path;
-			// while(new_path == old_path){
-			// 	new_path = graph.getRandomPathFromNode(closest);
-			// }
+			// When we get to the end of a path, find a new one to travel on
 			GamePath new_path;
 			// Try to change axis
 			if (wants_to_change_axis){
@@ -81,7 +76,7 @@ public abstract class MovingObject : MonoBehaviour {
 				direction = new_path.getStartingDirection(closest);
 
 				// Move to the next point
-				progress += direction;
+				// progress += direction;
 
 				setCurrentPath(new_path);
 			}

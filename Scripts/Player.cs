@@ -13,7 +13,7 @@ public class Player : MovingObject {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	protected override void Update () {
 		int horizontal = (int) Input.GetAxisRaw("Horizontal");;
 		int vertical = (int) Input.GetAxisRaw("Vertical");
 

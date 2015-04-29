@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BoardManager : MonoBehaviour {
 
@@ -13,8 +14,34 @@ public class BoardManager : MonoBehaviour {
 	public void setupBoard(){
 		boardHolder = new GameObject("Board").transform;
 
+		List<Vector2> all_points = getAllPointLocations();
+		putPointBubblesOnPoints(all_points);
+	}
 
+	private List<Vector2> getAllPointLocations(){
+		List<Vector2> all_points = new List<Vector2>();
+		foreach (GamePath path in graph.getAllPaths()){
+			List<Vector2> even_points = path.getEvenlySpacedPoints(bubble_spacing);
+			foreach(Vector2 point in even_points){
+				all_points.Add(point);
+			}
+		}
+		return all_points;
+	}
 
+	private void putPointBubblesOnPoints(List<Vector2> points){
+		foreach (Vector2 point in points){
+			// Create a point bubble at that position
+			GameObject instance = Instantiate(point_bubble, new Vector3(point.x, point.y, 0), Quaternion.identity) as GameObject;
+
+			instance.transform.SetParent(boardHolder);
+		}
+	}
+
+	void OnDrawGizmos(){
+		// foreach (GamePath path in graph.getAllPaths()){
+		// 	drawPathAsCurve(path);
+		// }
 	}
 
 	public void drawPathAsCurve(GamePath path){
@@ -29,24 +56,6 @@ public class BoardManager : MonoBehaviour {
 			Gizmos.color = Color.white;
 			Gizmos.DrawLine(prev, current);
 
-		}
-	}
-
-	public void fillPathWithPointBubbles(GamePath path){
-		for (int i = 0; i < path.points.Count; ++i){
-			// Get the current point as a vector
-			Vector2 current_point = path.points[i];
-
-			// Create a point bubble at that position
-			GameObject instance = Instantiate(point_bubble, new Vector3(current_point.x, current_point.y, 0), Quaternion.identity) as GameObject;
-
-			instance.transform.SetParent(boardHolder);
-		}
-	}
-
-	void OnDrawGizmos(){
-		foreach (GamePath path in graph.getAllPaths()){
-			drawPathAsCurve(path);
 		}
 	}
 
