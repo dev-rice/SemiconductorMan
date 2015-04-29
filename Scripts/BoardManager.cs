@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class BoardManager : MonoBehaviour {
 
 	public GameObject point_bubble;
-	public Graph graph;
+	public Graph1 graph;
 
 	private Transform boardHolder;
 
@@ -61,7 +61,7 @@ public class BoardManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		graph = new Graph();
+		graph = new Graph1();
 
 		setupBoard();
 	}

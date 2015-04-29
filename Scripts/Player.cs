@@ -3,6 +3,14 @@ using System.Collections;
 
 public class Player : MovingObject {
 
+	protected override void Start(){
+		base.Start();
+
+		Node start_node = graph.getPlayerStartNode();
+		GamePath start_path = graph.getRandomPathFromNode(start_node);
+		setCurrentPath(start_path);
+	}
+
 	// Update is called once per frame
 	protected override void Update () {
 		int horizontal = (int) Input.GetAxisRaw("Horizontal");;

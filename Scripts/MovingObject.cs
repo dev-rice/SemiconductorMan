@@ -27,7 +27,6 @@ public abstract class MovingObject : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D>();
 
 		graph = GameManager.instance.board_script.graph;
-		setCurrentPath(graph.getDefaultPath());
 
 		inverseMoveTime = 1f / moveTime;
 

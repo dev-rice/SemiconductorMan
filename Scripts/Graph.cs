@@ -266,13 +266,99 @@ public class PathHolder {
 }
 
 [Serializable]
-public class Graph {
+public abstract class Graph {
 
 	public List<Node> nodes = new List<Node>();
 	public AdjacencyList adj_list = new AdjacencyList();
 	public PathHolder path_holder;
 
 	public Graph(){
+
+	}
+
+	public abstract Node getPlayerStartNode();
+	public abstract GamePath getDefaultPath();
+
+	public List<GamePath> getAllPaths(){
+		List<GamePath> all_paths = new List<GamePath>();
+		foreach (Node node in nodes){
+			foreach(Node adjacent in adj_list.getAdjacentNodes(node)){
+				GamePath path = path_holder.getPathBetween(node, adjacent);
+				if (!all_paths.Contains(path)){
+					all_paths.Add(path);
+				}
+			}
+		}
+		return all_paths;
+	}
+
+	public Node findClosestNodeToPoint(Vector2 point){
+		// Not too many nodes so this is k
+		foreach (Node node in nodes){
+			float dist = (point - node.position).magnitude;
+			if (dist < float.Epsilon){
+				return node;
+			}
+		}
+		return new Node(new Vector2(0, 0));
+	}
+
+	public GamePath getRandomPathFromNode(Node a){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		int rand_index = Random.Range(0, adjacent.Count);
+		Node b = adjacent[rand_index];
+		return path_holder.getPathBetween(a, b);
+	}
+
+	public GamePath getNoAxisChangePathFromNode(GamePath path, Node a){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		bool is_horizontal = path.isHorizontal();
+		foreach (Node node in adjacent){
+			GamePath new_path = path_holder.getPathBetween(a, node);
+			if (new_path.isHorizontal() == is_horizontal && new_path != path){
+				// The two paths have the same axis
+				return new_path;
+			}
+		}
+		return path;
+	}
+
+	public GamePath getPathWithAxisChangeAndDirection(GamePath path, Node a, int direction){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		bool is_horizontal = path.isHorizontal();
+		foreach (Node node in adjacent){
+			GamePath new_path = path_holder.getPathBetween(a, node);
+			int new_dir = new_path.getStartingDirection(a);
+
+			bool is_same_path = new_path == path;
+			bool is_same_axis = new_path.isHorizontal() == is_horizontal;
+			bool is_correct_direction = new_dir == direction;
+
+			if (!is_same_path && !is_same_axis && is_correct_direction){
+				return new_path;
+			}
+		}
+		return path;
+	}
+
+	public GamePath getAxisChangePathFromNode(GamePath path, Node a){
+		List<Node> adjacent = adj_list.getAdjacentNodes(a);
+		bool is_horizontal = path.isHorizontal();
+		foreach (Node node in adjacent){
+			GamePath new_path = path_holder.getPathBetween(a, node);
+			if (new_path.isHorizontal() != is_horizontal && new_path != path){
+				// The two paths have a different axis
+				return new_path;
+			}
+		}
+		return path;
+	}
+
+}
+
+[Serializable]
+public class Graph1 : Graph {
+	public Graph1(){
 		// // Create an example graph with adjacency list
 		// nodes.Add(new Node(new Vector2(-4.0f, 4.0f)));
 		// nodes.Add(new Node(new Vector2(4.0f, 4.0f)));
@@ -371,83 +457,11 @@ public class Graph {
 
 	}
 
-	public List<GamePath> getAllPaths(){
-		List<GamePath> all_paths = new List<GamePath>();
-		foreach (Node node in nodes){
-			foreach(Node adjacent in adj_list.getAdjacentNodes(node)){
-				GamePath path = path_holder.getPathBetween(node, adjacent);
-				if (!all_paths.Contains(path)){
-					all_paths.Add(path);
-				}
-			}
-		}
-		return all_paths;
+	public override Node getPlayerStartNode(){
+		return nodes[0];
 	}
 
-	public GamePath getDefaultPath(){
+	public override GamePath getDefaultPath(){
 		return path_holder.getPathBetween(nodes[0], nodes[1]);
 	}
-
-	public Node findClosestNodeToPoint(Vector2 point){
-		// Not too many nodes so this is k
-		foreach (Node node in nodes){
-			float dist = (point - node.position).magnitude;
-			if (dist < float.Epsilon){
-				return node;
-			}
-		}
-		return new Node(new Vector2(0, 0));
-	}
-
-	public GamePath getRandomPathFromNode(Node a){
-		List<Node> adjacent = adj_list.getAdjacentNodes(a);
-		int rand_index = Random.Range(0, adjacent.Count);
-		Node b = adjacent[rand_index];
-		return path_holder.getPathBetween(a, b);
-	}
-
-	public GamePath getNoAxisChangePathFromNode(GamePath path, Node a){
-		List<Node> adjacent = adj_list.getAdjacentNodes(a);
-		bool is_horizontal = path.isHorizontal();
-		foreach (Node node in adjacent){
-			GamePath new_path = path_holder.getPathBetween(a, node);
-			if (new_path.isHorizontal() == is_horizontal && new_path != path){
-				// The two paths have the same axis
-				return new_path;
-			}
-		}
-		return path;
-	}
-
-	public GamePath getPathWithAxisChangeAndDirection(GamePath path, Node a, int direction){
-		List<Node> adjacent = adj_list.getAdjacentNodes(a);
-		bool is_horizontal = path.isHorizontal();
-		foreach (Node node in adjacent){
-			GamePath new_path = path_holder.getPathBetween(a, node);
-			int new_dir = new_path.getStartingDirection(a);
-
-			bool is_same_path = new_path == path;
-			bool is_same_axis = new_path.isHorizontal() == is_horizontal;
-			bool is_correct_direction = new_dir == direction;
-
-			if (!is_same_path && !is_same_axis && is_correct_direction){
-				return new_path;
-			}
-		}
-		return path;
-	}
-
-	public GamePath getAxisChangePathFromNode(GamePath path, Node a){
-		List<Node> adjacent = adj_list.getAdjacentNodes(a);
-		bool is_horizontal = path.isHorizontal();
-		foreach (Node node in adjacent){
-			GamePath new_path = path_holder.getPathBetween(a, node);
-			if (new_path.isHorizontal() != is_horizontal && new_path != path){
-				// The two paths have a different axis
-				return new_path;
-			}
-		}
-		return path;
-	}
-
 }
